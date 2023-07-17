@@ -13,7 +13,6 @@ class EnemyManager:
     def draw(self,screen):
         for enemy in self.enemies:
             enemy.draw(screen)
-
     def add_enemy(self):
         if len(self.enemies) < 6:
             enemy = Enemy()
