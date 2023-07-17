@@ -11,11 +11,12 @@ class Enemy(Sprite):
     SPEED_X = 5
     SPEED_Y = 1
     MOV_X = {0: 'left', 1: 'right'}
-    ENEMY_IMG = [ENEMY_1,ENEMY_2]
+    ENEMY_ONE = pygame.transform.scale(ENEMY_1, (SHIP_WIDTH,SHIP_HEIGHT))
+    ENEMY_TWO = pygame.transform.scale(ENEMY_2, (60, 80))
+    ENEMY_IMG = [ENEMY_ONE,ENEMY_TWO]
     def __init__(self):
 
         self.image = choice(self.ENEMY_IMG)
-        self.image = pygame.transform.scale(self.image, (SHIP_WIDTH, SHIP_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.x = randint(0, SCREEN_WIDTH)
         self.rect.y = self.Y_POS
