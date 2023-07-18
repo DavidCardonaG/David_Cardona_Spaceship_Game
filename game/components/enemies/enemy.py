@@ -26,18 +26,21 @@ class Enemy(Sprite):
         self.type = 'enemy'
         self.shooting_time = randint(30,50)
         
-    def update(self, enemies, game):
-        self.rect.y += self.speed_y
-        self.shoot(game.bullet_manager)
+    def update(self, enemies, game, user_input):
         if self.movement_x == 'left':
             self.rect.x -= self.speed_x
         else:
             self.rect.x += self.speed_x
         self.change_movement_x()
+    
+        if self.type == 'enemy':
+            self.rect.y += self.speed_y
+            self.shoot(game.bullet_manager)
+            if self.rect.y >= SCREEN_HEIGHT:
+                enemies.remove(self)
         
-        if self.rect.y >= SCREEN_HEIGHT:
-            enemies.remove(self)
-            
+        self.shoot_player(game.bullet_manager, user_input)
+
     def shoot(self, bullet_manager):
         current_time = pygame.time.get_ticks()
         if self.shooting_time <= current_time:
@@ -45,7 +48,13 @@ class Enemy(Sprite):
             bullet_manager.add_bullet(bullet)
             self.shooting_time += randint(20,50)
         
-    
+    def shoot_player(self, bullet_manager, user_input):
+        if user_input[pygame.K_1]:
+            self.type == 'player'
+            print('disparo')
+            bullet = Bullet(self)
+            bullet_manager.add_bullet(bullet)
+
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         

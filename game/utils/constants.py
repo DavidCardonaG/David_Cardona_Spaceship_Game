@@ -1,6 +1,7 @@
 import pygame
 import os
 
+
 # Global Constants
 TITLE = "Spaceships Game"
 SHIP_WIDTH = 40
@@ -9,6 +10,9 @@ SHIP_WIDTH_TWO = 60
 SHIP_HEIGHT_TWO = 80
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
+COLOR = (255,255,255)
+SCORE = 0
+FONT = pygame.font.SysFont('comicsansms', 36)
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 
@@ -20,6 +24,7 @@ SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
+GAME_OVER = pygame.image.load(os.path.join(IMG_DIR, 'Other/GameOver.png'))
 
 DEFAULT_TYPE = "default"
 SHIELD_TYPE = 'shield'
