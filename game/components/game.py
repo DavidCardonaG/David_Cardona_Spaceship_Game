@@ -1,6 +1,6 @@
 import pygame
 pygame.font.init()
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, COLOR,FONT_STYLE
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, WHITE,FONT_STYLE, HEART
 from game.components.spaceship import SpaceShip
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
@@ -20,10 +20,12 @@ class Game:
         self.enemy_manager = EnemyManager()
         self.bullet_manager = BulletManager()
         self.running = False
-        self.menu = Menu('Press any key to start...', self.screen )
+        self.menu = Menu('Welcome crew member, Press any key to start...', self.screen)
         self.score = 0
-        self.death_count = 0
-    
+        self.high_score = 0
+        self.death_count = 5
+
+
     def execute(self):
         self.running = True
         while self.running:
@@ -59,6 +61,7 @@ class Game:
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
         self.draw_score()
+        self.draw_deaths(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -75,20 +78,27 @@ class Game:
     def show_menu(self):
         self.menu.reset_screen_color(self.screen)
 
-        if self.death_count == 0:
+        if self.death_count == 5:
             self.menu.draw(self.screen)
+        elif self.death_count == 0:
+            self.menu.game_over(self.screen, self)
         else:
-            self.menu.update_message('New Message')
-            self.menu.draw(self.screen)
+            self.menu.update_message(self.screen, self)
         
         icon = self.image = pygame.transform.scale(ICON, (80,120))
-        self.screen.blit(icon, ((SCREEN_WIDTH //2) - 40, (SCREEN_HEIGHT //2)))
+        self.screen.blit(icon, ((SCREEN_WIDTH //2) - 40, (60)))
 
         self.menu.update(self)
 
     def draw_score(self):
         font = pygame.font.Font(FONT_STYLE, 30)
-        text = font.render(f'Score: {self.score}', True, COLOR)
+        text = font.render(f'Score: {self.score}', True, WHITE)
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
+    def draw_deaths(self, screen):
+        X,Y = 30, 30
+        for death in range(self.death_count):
+            self.image = pygame.transform.scale(HEART,(X, Y))
+            self.rect = self.image.get_rect() 
+            screen.blit(self.image, self.rect)

@@ -1,6 +1,5 @@
 import pygame
 
-from game.utils.constants import SCORE
 class BulletManager:
 
     def __init__(self):
@@ -14,7 +13,7 @@ class BulletManager:
             if bullet.rect.colliderect(game.player.rect) and bullet.owner == 'enemy':
                 self.enemy_bullets.remove(bullet)
                 game.playing = False
-                game.death_count += 1
+                game.death_count -= 1
                 pygame.time.delay(1000)
                 break
         
@@ -25,6 +24,8 @@ class BulletManager:
                 if bullet.rect.colliderect(enemy.rect) and bullet.owner == 'player':
                     game.enemy_manager.enemies.remove(enemy)
                     game.score += 1
+                    if game.score > game.high_score:
+                        game.high_score = game.score
 
     def draw(self, screen):
         for bullet in self.enemy_bullets:
