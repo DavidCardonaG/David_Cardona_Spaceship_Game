@@ -12,7 +12,6 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 COLOR = (255,255,255)
 SCORE = 0
-FONT = pygame.font.SysFont('comicsansms', 36)
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 

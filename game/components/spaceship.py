@@ -2,6 +2,7 @@ import pygame
 from pygame.sprite import Sprite
 
 from game.utils.constants import SPACESHIP, SCREEN_WIDTH, SCREEN_HEIGHT, SHIP_WIDTH, SHIP_HEIGHT
+from game.components.bullets.bullet import Bullet
 
 class SpaceShip(Sprite):
     X_POS = (SCREEN_WIDTH // 2) - SHIP_WIDTH
@@ -13,8 +14,9 @@ class SpaceShip(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.X_POS
         self.rect.y = self.Y_POS
+        self.type = 'player'
 
-    def update(self, user_input):
+    def update(self, user_input, game):
         if user_input[pygame.K_LEFT]:
             self.move_left()
         
@@ -26,6 +28,8 @@ class SpaceShip(Sprite):
 
         if user_input[pygame.K_DOWN]:
             self.move_down()
+        if user_input[pygame.K_SPACE]:
+            self.shoot_player(game.bullet_manager)
 
     def move_left(self):
         self.rect.x -= self.SHIP_SPEED
@@ -45,7 +49,9 @@ class SpaceShip(Sprite):
         if self.rect.y < SCREEN_HEIGHT - 70:
             self.rect.y += self.SHIP_SPEED
 
-        
+    def shoot_player(self, bullet_manager):
+        bullet = Bullet(self)
+        bullet_manager.add_bullet(bullet)
 
     def draw(self,screen):
         screen.blit(self.image, self.rect)

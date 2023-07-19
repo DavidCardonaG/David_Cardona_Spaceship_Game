@@ -38,8 +38,7 @@ class Enemy(Sprite):
             self.shoot(game.bullet_manager)
             if self.rect.y >= SCREEN_HEIGHT:
                 enemies.remove(self)
-        
-        self.shoot_player(game.bullet_manager, user_input)
+
 
     def shoot(self, bullet_manager):
         current_time = pygame.time.get_ticks()
@@ -47,13 +46,6 @@ class Enemy(Sprite):
             bullet = Bullet(self)
             bullet_manager.add_bullet(bullet)
             self.shooting_time += randint(20,50)
-        
-    def shoot_player(self, bullet_manager, user_input):
-        if user_input[pygame.K_1]:
-            self.type == 'player'
-            print('disparo')
-            bullet = Bullet(self)
-            bullet_manager.add_bullet(bullet)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
