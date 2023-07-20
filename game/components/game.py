@@ -5,6 +5,7 @@ from game.components.spaceship import SpaceShip
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
 from game.components.menu import Menu
+from game.components.power_ups.power_up_manager import PowerUpManager
 class Game:
     def __init__(self):
         pygame.init()
@@ -24,6 +25,7 @@ class Game:
         self.score = 0
         self.high_score = 0
         self.death_count = 5
+        self.power_up_manager = PowerUpManager()
 
 
     def execute(self):
@@ -36,6 +38,7 @@ class Game:
 
     def run(self):
         # Game loop: events - update - draw
+        self.reset()
         self.playing = True
         while self.playing:
             self.events()
@@ -52,6 +55,7 @@ class Game:
         self.player.update(user_input, self)
         self.enemy_manager.update(self, user_input)
         self.bullet_manager.update(self)
+        self.power_up_manager.update(self)
 
     def draw(self):
         self.clock.tick(FPS)
@@ -62,6 +66,8 @@ class Game:
         self.bullet_manager.draw(self.screen)
         self.draw_score()
         self.draw_deaths(self.screen)
+        self.power_up_manager.draw(self.screen)
+        self.draw_power_up_time()
         pygame.display.update()
         pygame.display.flip()
 
@@ -90,15 +96,32 @@ class Game:
 
         self.menu.update(self)
 
+    def reset(self):
+        self.score = 0
+        self.player.reset()
+        self.power_up_manager.reset()
+
     def draw_score(self):
         font = pygame.font.Font(FONT_STYLE, 30)
         text = font.render(f'Score: {self.score}', True, WHITE)
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
+
     def draw_deaths(self, screen):
         X,Y = 30, 30
         for death in range(self.death_count):
             self.image = pygame.transform.scale(HEART,(X, Y))
             self.rect = self.image.get_rect() 
             screen.blit(self.image, self.rect)
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks())/ 1000,2)
+
+            if time_to_show >= 0:
+                self.menu.draw(self.screen, f'{self.player.power_up_type} is enable for {time_to_show} seconds', 540,50,(WHITE))
+            else:
+                self.player.has_power_up = False
+                self.player.power_up_type = DEFAULT_TYPE
+                self.player.set_image()
