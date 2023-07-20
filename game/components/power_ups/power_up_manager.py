@@ -1,10 +1,9 @@
 import pygame
-from pygame.sprite import Sprite
 from random import randint
 from game.utils.constants import SPACESHIP_SHIELD
 from game.components.power_ups.shield import Shield
 
-class PowerUpManager(Sprite):
+class PowerUpManager():
 
     def __init__(self):
         self.power_ups = []

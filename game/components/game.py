@@ -1,6 +1,6 @@
 import pygame
 pygame.font.init()
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, WHITE,FONT_STYLE, HEART
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, WHITE,FONT_STYLE, HEART,MUTE, Y_SOUND, X_SOUND,MAX_SOUND,MIN_SOUND,SOUND, PAUSED,X_HEART,Y_HEART
 from game.components.spaceship import SpaceShip
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
@@ -26,6 +26,7 @@ class Game:
         self.high_score = 0
         self.death_count = 5
         self.power_up_manager = PowerUpManager()
+        self.list_sound = [MUTE,MAX_SOUND,MIN_SOUND,SOUND]
 
 
     def execute(self):
@@ -52,7 +53,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input, self)
+        self.player.update(user_input, self, self.screen)
         self.enemy_manager.update(self, user_input)
         self.bullet_manager.update(self)
         self.power_up_manager.update(self)
@@ -68,6 +69,7 @@ class Game:
         self.draw_deaths(self.screen)
         self.power_up_manager.draw(self.screen)
         self.draw_power_up_time()
+        self.control_sounds()
         pygame.display.update()
         pygame.display.flip()
 
@@ -82,7 +84,7 @@ class Game:
         self.y_pos_bg += self.game_speed
 
     def show_menu(self):
-        self.menu.reset_screen_color(self.screen)
+        self.menu.background(self.screen)
 
         if self.death_count == 5:
             self.menu.draw(self.screen)
@@ -109,9 +111,8 @@ class Game:
         self.screen.blit(text, text_rect)
 
     def draw_deaths(self, screen):
-        X,Y = 30, 30
         for death in range(self.death_count):
-            self.image = pygame.transform.scale(HEART,(X, Y))
+            self.image = pygame.transform.scale(HEART,(X_HEART, Y_HEART))
             self.rect = self.image.get_rect() 
             screen.blit(self.image, self.rect)
 
@@ -120,8 +121,69 @@ class Game:
             time_to_show = round((self.player.power_time_up - pygame.time.get_ticks())/ 1000,2)
 
             if time_to_show >= 0:
-                self.menu.draw(self.screen, f'{self.player.power_up_type} is enable for {time_to_show} seconds', 540,50,(WHITE))
+                return ('hola')
             else:
                 self.player.has_power_up = False
                 self.player.power_up_type = DEFAULT_TYPE
                 self.player.set_image()
+
+    def draw_sounds(self,screen,image):
+            self.image = pygame.transform.scale(image,(X_SOUND, Y_SOUND))
+            self.rect = self.image.get_rect() 
+            self.rect.x = (SCREEN_WIDTH // 2)
+            self.rect.y = 20
+            screen.blit(self.image, self.rect)
+
+    def control_sounds(self):
+        self.mute_sound()
+        self.max_sound()
+        self.up_sound()
+        self.down_sound()
+
+    def mute_sound(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_m]:
+            pygame.mixer.music.set_volume(0.0)
+            self.draw_sounds(self.screen,self.list_sound[0])
+        
+    def max_sound(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_x]:
+            pygame.mixer.music.set_volume(1.0)
+            self.draw_sounds(self.screen,self.list_sound[3])
+
+    def up_sound(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_w] and pygame.mixer.music.get_volume() < 1.0:
+            pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.01)
+            self.draw_sounds(self.screen,self.list_sound[1])
+        elif key[pygame.K_w] and pygame.mixer.music.get_volume() == 1.0:
+            self.draw_sounds(self.screen,self.list_sound[3])
+
+    def down_sound(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_s] and pygame.mixer.music.get_volume() > 0.0 :
+            pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.01)
+            self.draw_sounds(self.screen,self.list_sound[2])
+        elif key[pygame.K_s] and pygame.mixer.music.get_volume() == 0.0:
+            self.draw_sounds(self.screen,self.list_sound[0])
+        
+    
+    def pause_game(self,screen):
+
+        pause = True
+
+        while pause:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    pygame.display.quit()
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        pause = False
+                
+                if event.type == pygame.K_q:
+                    pygame.quit()
+                    pygame.display.quit()
+            self.draw_sounds(self.screen,PAUSED)
