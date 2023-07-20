@@ -1,11 +1,13 @@
 import pygame
+import sys
 pygame.font.init()
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, WHITE,FONT_STYLE, HEART,MUTE, Y_SOUND, X_SOUND,MAX_SOUND,MIN_SOUND,SOUND, PAUSED,X_HEART,Y_HEART
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, WHITE,FONT_STYLE, HEART,MUTE, Y_SOUND, X_SOUND,MAX_SOUND,MIN_SOUND,SOUND, PAUSED,X_HEART,Y_HEART,X_P_HEART,Y_P_HEART, HEART_SPACE
 from game.components.spaceship import SpaceShip
 from game.components.enemies.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
 from game.components.menu import Menu
 from game.components.power_ups.power_up_manager import PowerUpManager
+from game.components.bursts.burst import Burst
 class Game:
     def __init__(self):
         pygame.init()
@@ -21,7 +23,7 @@ class Game:
         self.enemy_manager = EnemyManager()
         self.bullet_manager = BulletManager()
         self.running = False
-        self.menu = Menu('Welcome crew member, Press any key to start...', self.screen)
+        self.menu = Menu('Welcome crew member, Press Enter key to start...', self.screen)
         self.score = 0
         self.high_score = 0
         self.death_count = 5
@@ -100,6 +102,7 @@ class Game:
 
     def reset(self):
         self.score = 0
+        self.explosion = []
         self.player.reset()
         self.power_up_manager.reset()
 
@@ -112,9 +115,9 @@ class Game:
 
     def draw_deaths(self, screen):
         for death in range(self.death_count):
-            self.image = pygame.transform.scale(HEART,(X_HEART, Y_HEART))
-            self.rect = self.image.get_rect() 
-            screen.blit(self.image, self.rect)
+            heart_x = X_P_HEART + death * HEART_SPACE
+            self.image = pygame.transform.scale(HEART, (X_HEART,Y_HEART))
+            screen.blit(self.image, (heart_x, Y_P_HEART))
 
     def draw_power_up_time(self):
         if self.player.has_power_up:
@@ -167,13 +170,11 @@ class Game:
             self.draw_sounds(self.screen,self.list_sound[2])
         elif key[pygame.K_s] and pygame.mixer.music.get_volume() == 0.0:
             self.draw_sounds(self.screen,self.list_sound[0])
-        
+
     
-    def pause_game(self,screen):
-
-        pause = True
-
-        while pause:
+    def pause_game(self, screen):
+        self.pause = True
+        while self.pause:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -181,9 +182,13 @@ class Game:
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
-                        pause = False
-                
+                        self.pause = False
+
+
                 if event.type == pygame.K_q:
                     pygame.quit()
                     pygame.display.quit()
-            self.draw_sounds(self.screen,PAUSED)
+                    sys.exit()
+
+        if not self.pause:
+            screen.blit(HEART, (2000,200))

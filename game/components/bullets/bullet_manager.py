@@ -1,10 +1,13 @@
 import pygame
 
+from game.utils.constants import LASER,BLACK
+from game.components.bursts.burst import Burst
 class BulletManager:
 
     def __init__(self):
         self.bullets = []
         self.enemy_bullets = []
+        self.explosion = []
 
     def update(self, game):
         for bullet in self.enemy_bullets:
@@ -24,6 +27,7 @@ class BulletManager:
 
             for enemy in game.enemy_manager.enemies:
                 if bullet.rect.colliderect(enemy.rect) and bullet.owner == 'player':
+                    LASER.play()
                     game.enemy_manager.enemies.remove(enemy)
                     game.score += 1
                     if game.score > game.high_score:
@@ -42,3 +46,12 @@ class BulletManager:
         
         if bullet.owner == 'player' and len(self.bullets) < 3:
             self.bullets.append(bullet)
+
+
+        for burst in range(9):
+            data_burst = 'game/assets/Meteors/explosion{}.png'.format(burst)
+
+            image = pygame.image.load(data_burst).convert()
+            image.set_colorkey(BLACK)
+            img_scale = pygame.transform.scale(image, (70,70))
+            self.explosion.append(img_scale)

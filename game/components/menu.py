@@ -23,15 +23,20 @@ class Menu:
                 game.playing = False
                 game.running = False
             elif event.type == pygame.KEYDOWN:
-                MUSIC_FOND.play()
-                game.run()
-            elif game.death_count == 0 and event.type == pygame.K_INSERT:
-                
-                break
+                if event.key == pygame.K_RETURN:
+                    pygame.mixer.music.play(-1)
+                    game.run()
+            elif game.death_count == 0:
+                if event.type == pygame.K_t:
+                    game.playing = False
+                    game.running = False
+                    pygame.display.quit()
+                    pygame.quit()
+                    break
 
     
     def update_message(self,screen, game):
-        messages = ['Game Over, Press any key to restart',
+        messages = ['Game Over, Press Enter key to restart',
                     f'Your Score: {game.score}', 
                     f'Highest Score: {game.high_score}', 
                     f'Total Deaths {game.death_count}']

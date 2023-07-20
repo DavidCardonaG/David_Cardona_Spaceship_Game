@@ -43,10 +43,12 @@ SOUND = pygame.image.load(os.path.join(IMG_DIR, 'Sounds/sound.png'))
 PAUSED = pygame.image.load(os.path.join(IMG_DIR,'Other/pausa.jpg'))
 ALIEN = pygame.image.load(os.path.join(IMG_DIR,'Other/fondo_alien.jpg'))
 
-MUSIC_FOND = pygame.mixer.Sound(os.path.join('game/assets/Sounds/music.ogg'))
+MUSIC_FOND = pygame.mixer.music.load(os.path.join('game/assets/Sounds/music.ogg'))
 LASER = pygame.mixer.Sound(os.path.join('game/assets/Sounds/laser.ogg'))
 X_SOUND = 60
 Y_SOUND = 60
 X_HEART = 40
 Y_HEART = 40
+X_P_HEART,Y_P_HEART = 20, 20
+HEART_SPACE = 40
 FONT_STYLE = 'freesansbold.ttf'
